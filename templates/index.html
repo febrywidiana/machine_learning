@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Deteksi Jenis Kulit Wajah</title>
+
+<!-- Tailwind -->
+ <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1FA58F",
+                        soft: "#E8F9F6",
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* Floating small animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
+        }
+
+  .card-blue {
+    background: linear-gradient(135deg, #1e40af, #2563eb);
+    color: white;
+    /* box-shadow: 0 25px 50px -15px rgba(37, 99, 235, 0.6); */
+  }
+
+  .card-white {
+    background: #1f2937; /* abu gelap supaya nyatu sama black bg */
+    color: #e5e7eb;
+  }
+
+  .line {
+    background-color: #38bdf8;
+  }
+
+    </style>
+</head>
+
+<body class="font-inter bg-black pt-6">
+
+   <nav id="navbar"
+  class="w-full py-4 px-10 bg-white shadow-sm fixed top-4 left-1/2 transform -translate-x-1/2
+         rounded-full z-50 max-w-7xl transition-all duration-300 ease-in-out">
+  
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-6">
+
+    <!-- Logo -->
+    <div class="flex items-center space-x-2">
+      <p class="font-bold text-xl">
+        Skin<span class="text-[#1A43BF]">AI</span>
+      </p>
+    </div>
+
+    <!-- Menu -->
+   <div class="hidden md:flex space-x-2 font-medium text-gray-700">
+
+  <a href="#beranda"
+     class="px-5 py-2 rounded-full
+            transition-all duration-300 ease-out
+            hover:bg-blue-600 hover:text-white
+            hover:shadow-md">
+    Beranda
+  </a>
+
+  <a href="#jenis"
+     class="px-5 py-2 rounded-full
+            transition-all duration-300 ease-out
+            hover:bg-blue-600 hover:text-white
+            hover:shadow-md">
+    Jenis
+  </a>
+
+  <a href="#cara"
+     class="px-5 py-2 rounded-full
+            transition-all duration-300 ease-out
+            hover:bg-blue-600 hover:text-white
+            hover:shadow-md">
+    Cara
+  </a>
+
+  <a href="#prediksi"
+     class="px-5 py-2 rounded-full
+            transition-all duration-300 ease-out
+            hover:bg-blue-600 hover:text-white
+            hover:shadow-md">
+    Prediksi
+  </a>
+
+</div>
+
+
+    <!-- Button -->
+    <button class="bg-black px-5 py-2 rounded-full text-white hover:bg-teal-700 transition">
+      Start Analysis
+    </button>
+
+  </div>
+</nav>
+
+<section class="max-w-7xl mx-auto px-4 py-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+    <!-- LEFT TEXT -->
+    <div>
+
+        <!-- Tagline -->
+        <div class="inline-flex items-center bg-[#202020] text-white px-4 py-1 rounded-full text-sm font-semibold mb-5">
+            ⚡ AI–Powered Skin Analysis
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-5xl font-bold leading-tight text-gray-900">
+            Discover Your <br />
+            <span class="text-[#1A43BF]">Skin Type</span>
+        </h1>
+
+        <!-- Description -->
+        <p class="text-white mt-5 w-11/12 leading-relaxed">
+           Unggah foto dan biarkan AI canggih kami menganalisis kulit Anda dalam hitungan detik. Dapatkan wawasan yang dipersonalisasi dan rekomendasi perawatan kulit yang disesuaikan khusus untuk Anda.
+        </p>
+
+        <!-- Buttons -->
+        <div class="flex items-center gap-4 mt-8">
+            <label class="bg-[#202020] text-white px-6 py-3 rounded-xl cursor-pointer hover:bg-teal-700 flex items-center gap-2">
+                <input type="file" class="hidden" id="uploadInput">
+                ⬆ Unggah Foto Anda
+            </label>
+
+            <button class="px-6 py-3 bg-white border border-black rounded-xl text-gray-700 hover:bg-gray-100">
+               Pelajari Cara Kerjanya
+            </button>
+        </div>
+
+        <!-- Features -->
+        <div class="flex items-center gap-6 mt-10 text-gray-500 text-sm">
+            <div>🔒 100% Private</div>
+            <div>⚡ Instant Results</div>
+            <div>🤖 AI Accuracy</div>
+        </div>
+    </div>
+
+
+    <!-- RIGHT IMAGE AREA -->
+    <div class="relative">
+
+    <!-- Big container -->
+    <div class="w-full bg-white rounded-3xl shadow-lg p-6">
+        <div class="w-full h-[490px] bg-soft rounded-2xl overflow-hidden flex items-center justify-center">
+
+            <!-- VIDEO ILLUSTRATION -->
+            <video autoplay muted loop playsinline class="w-full h-full object-cover">
+                 <source src="{{ url_for('static', filename='oo.mp4') }}" type="video/mp4">
+            </video>
+
+        </div>
+    </div>
+
+    <!-- Badge AI Analyzing -->
+    <div class="absolute right-0 top-0 bg-white shadow-md rounded-xl px-4 py-2 text-sm flex items-center gap-2 animate-[float_3s_infinite]">
+        🤖 <span class="font-semibold">AI Analyzing</span>
+        <span class="text-primary font-bold">98% Accuracy</span>
+    </div>
+
+    <!-- Badge Secure -->
+    <div class="absolute left-[40%] bottom-[-20px] bg-white shadow-md rounded-xl px-4 py-2 text-sm flex items-center gap-2 animate-[float_4s_infinite]">
+        🔐 <span class="font-semibold">Secure</span>
+        <p class="text-gray-500">Private Analysis</p>
+    </div>
+</div>
+
+</section>
+
+<section class="py-20 bg-black">
+    <div id="jenis"></div>
+    <div class="max-w-7xl mx-auto px-6 text-center">
+
+        <!-- Subtitle -->
+        <p class="text-sm font-semibold text-[#0041C2] tracking-wide">
+            Jenis Kulit
+        </p>
+
+        <!-- Title -->
+        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+            Memahami Kulit Unik Anda
+        </h2>
+
+        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">
+            Kulit setiap orang berbeda. AI kami mengidentifikasi kategori mana dari empat kategori utama ini yang paling sesuai dengan kulit Anda.
+        </p>
+
+        <!-- Steps Wrapper -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-16 relative">
+
+            <!-- GARIS PENGHUBUNG (hanya tampil di desktop) -->
+            <div class="hidden md:block absolute top-16 left-0 right-0 w-full h-[2px] bg-gray-300"></div>
+
+            <!-- STEP 1 -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm relative">
+                <div class="text-4xl font-extrabold text-[#0041C2]">01</div>
+
+                <h3 class="text-lg font-bold text-gray-800 mt-4">Oily</h3>
+
+                <p class="text-sm text-gray-600 mt-2">
+                    Produksi sebum berlebih, cenderung berminyak dan pori-pori membesar. Mendapatkan manfaat dari produk pengontrol minyak.
+                </p>
+
+                <ul class="text-sm text-[#0041C2] mt-4 space-y-1">
+                    <li>• Kulit di area T-zone mengkilap</li>
+                    <li>• Pori-pori terlihat</li>
+                    <li>• Rentan berjerawat</li>
+                </ul>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm relative">
+                <div class="text-4xl font-extrabold text-[#0041C2]">02</div>
+
+                <h3 class="text-lg font-bold text-gray-800 mt-4">Dry</h3>
+
+                <p class="text-sm text-gray-600 mt-2">
+                    Kurang lembap, terasa kencang atau mengelupas. Membutuhkan produk perawatan kulit yang kaya dan menghidrasi.
+                </p>
+
+                <ul class="text-sm text-[#0041C2] mt-4 space-y-1">
+                    <li>• Terasa kencang</li>
+                    <li>• Bercak-bercak mengelupas</li>
+                    <li>• Garis-garis halus</li>
+                </ul>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm relative">
+                <div class="text-4xl font-extrabold text-[#0041C2]">03</div>
+
+                <h3 class="text-lg font-bold text-gray-800 mt-4">Combination</h3>
+
+                <p class="text-sm text-gray-600 mt-2">
+                    Campuran area berminyak dan kering. Zona T biasanya berminyak sedangkan pipi normal atau kering.
+                </p>
+
+                <ul class="text-sm text-[#0041C2] mt-4 space-y-1">
+                    <li>• Zona T berminyak</li>
+                    <li>• Pipi kering</li>
+                    <li>• Masalah campuran</li>
+                </ul>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm relative">
+                <div class="text-4xl font-extrabold text-[#0041C2]">04</div>
+
+                <h3 class="text-lg font-bold text-gray-800 mt-4">Normal</h3>
+
+                <p class="text-sm text-gray-600 mt-2">
+                  Kulit seimbang dengan sedikit masalah. Mempertahankan kelembapan dan kejernihan alami.
+                </p>
+
+                <ul class="text-sm text-[#0041C2] mt-4 space-y-1">
+                    <li>• Minyak seimbang</li>
+                    <li>• Pori-pori kecil</li>
+                    <li>• Tekstur merata</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-20 bg-black">
+    <div id="cara"></div>
+    <div class="max-w-7xl mx-auto px-6 text-center">
+
+        <!-- Subtitle -->
+        <p class="text-sm tracking-widest text-teal-600 font-semibold">
+            TEKNOLOGI
+        </p>
+
+        <!-- Title -->
+        <h2 class="text-3xl md:text-4xl font-extrabold text-[#003B46] mt-2">
+            Tentang Chatbot Penyakit Ikan
+        </h2>
+
+        <!-- Description -->
+        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">
+            Didukung oleh teknologi machine learning terkini untuk memberikan hasil deteksi yang akurat.
+        </p>
+        <div class="w-full max-w-7xl mx-auto px-6 py-20"> 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center"> 
+                <!-- LEFT: IMAGE SLIDER --> 
+                 <div class="relative w-full h-[360px] overflow-hidden rounded-xl shadow-lg"> <img id="slideImage" src="cnn.png" class="w-full h-full object-cover transition-all duration-500"> </div> 
+                 <!-- RIGHT: CARD SLIDER --> 
+                  <div id="slideCards" class="relative transition-all duration-500"> 
+                   <!-- CARD 1 -->
+<div class="cardItem active card-white p-10 rounded-xl">
+    <h3 class="text-2xl font-bold">Oily</h3>
+    <div class="line w-10 h-[3px] my-4"></div>
+    <p>Excess sebum production, visible pores, and a shiny appearance throughout the day.</p>
+    <div class="mt-6 text-right text-2xl">↗</div>
+</div>
+
+<!-- CARD 2 -->
+<div class="cardItem card-white p-10 rounded-xl hidden">
+    <h3 class="text-2xl font-bold">Natural Language Processing (NLP)</h3>
+    <div class="line w-10 h-[3px] my-4"></div>
+    <p>Teknologi pemrosesan bahasa alami untuk memahami deskripsi gejala yang diketik pengguna dalam bahasa Indonesia sehari-hari.</p>
+    <div class="mt-6 text-right text-2xl">↗</div>
+</div>
+
+<!-- CARD 3 -->
+
+<div class="cardItem card-white p-10 rounded-xl hidden">
+    <h3 class="text-2xl font-bold">Ensemble Model</h3>
+    <div class="line w-10 h-[3px] my-4"></div>
+    <p>Menggabungkan hasil analisis gambar dan teks untuk memberikan diagnosis yang lebih akurat dan komprehensif.</p>
+    <div class="mt-6 text-right text-2xl">↗</div>
+</div>
+ <div class="flex justify-end gap-4 mt-6">
+        <button id="prevBtn" 
+                class="p-3 rounded-lg border bg-blue-700 hover:bg-gray-100 text-xl shadow">
+            ←
+        </button>
+        <button id="nextBtn" 
+                class="p-3 rounded-lg border bg-blue-700 hover:bg-gray-100 text-xl shadow">
+            →
+        </button>
+    </div>
+
+</div>
+
+</section>
+<div class="max-w-6xl mx-auto py-16 px-6">
+<div id="prediksi"></div>
+    <!-- Title -->
+    <div class="text-center mb-14">
+        <h1 class="text-5xl font-extrabold text-[#0F3D3E] tracking-tight mb-3">
+            Analyze Your <span class="text-[#1A43BF]">Skin Type</span>
+        </h1>
+        <p class="text-gray-100 text-lg">
+            Upload a clear photo of your face and let our AI analyze your skin type instantly.
+        </p>
+    </div>
+
+    <!-- 2 Columns -->
+   <!-- CONTAINER -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 perspective-[1200px]">
+
+  <div id="result"
+    class="relative bg-white rounded-[36px] p-12
+           border border-gray-200
+           shadow-[0_40px_80px_-25px_rgba(0,0,0,0.35)]
+           transform-gpu transition-all duration-500
+           hover:-translate-y-2 hover:rotate-x-2 hover:rotate-y-1">
+
+    <!-- Light reflection -->
+    <div class="absolute inset-0 rounded-[36px]
+                bg-gradient-to-br from-white/80 via-transparent to-gray-100/40
+                pointer-events-none"></div>
+
+    <form action="/#result" method="POST" enctype="multipart/form-data"
+          class="relative flex flex-col items-center justify-center w-full">
+
+      <!-- Upload Box -->
+      <label for="fileInput"
+        class="group w-full h-[300px] rounded-[30px]
+               border border-gray-300
+               bg-gradient-to-br from-white to-gray-50
+               shadow-inner
+               flex flex-col items-center justify-center cursor-pointer
+               transition-all duration-300
+               hover:shadow-[inset_0_3px_10px_rgba(0,0,0,0.2)]">
+
+        <div
+          class="w-16 h-16 rounded-full
+                 bg-gradient-to-br from-green-400 to-teal-500
+                 flex items-center justify-center
+                 shadow-lg mb-4
+                 group-hover:scale-110 transition">
+          <img src="https://img.icons8.com/ios-filled/30/ffffff/camera--v1.png" />
+        </div>
+
+        <p class="text-xl font-semibold text-gray-800">Upload Photo</p>
+        <p class="text-sm text-gray-500 mt-1">PNG, JPG — max 10MB</p>
+      </label>
+
+      <!-- Hidden Input -->
+      <input id="fileInput" type="file" name="file" accept="image/*" class="hidden" required>
+
+      <!-- Preview Image -->
+      <img id="previewImage"
+        class="hidden w-48 h-48 mt-8 rounded-3xl object-cover
+               shadow-[0_30px_60px_-20px_rgba(0,0,0,0.45)]
+               border border-gray-200" />
+
+      <!-- Button -->
+      <button
+        class="mt-10 w-full py-4 rounded-2xl text-lg font-semibold text-white
+               bg-gradient-to-br from-black via-gray-900 to-black
+               shadow-[0_20px_45px_-15px_rgba(0,0,0,0.6)]
+               hover:-translate-y-1 hover:shadow-[0_35px_65px_-20px_rgba(0,0,0,0.75)]
+               transition-all duration-300">
+        Upload & Predict
+      </button>
+
+    </form>
+  </div>
+
+  
+  <div
+    class="relative bg-white rounded-[36px] p-12
+           border border-gray-200
+           shadow-[0_40px_80px_-25px_rgba(0,0,0,0.35)]
+           transform-gpu transition-all duration-500
+           hover:-translate-y-2 hover:-rotate-x-1 hover:rotate-y-1
+           flex flex-col items-center justify-center">
+
+    <!-- Highlight -->
+    <div class="absolute inset-0 rounded-[36px]
+                bg-gradient-to-tr from-white/70 via-transparent to-gray-100/40
+                pointer-events-none"></div>
+
+    {% if not result %}
+    <div class="relative w-full h-[300px] rounded-[30px]
+                bg-gradient-to-br from-gray-50 to-white
+                border border-gray-300
+                shadow-inner
+                flex flex-col items-center justify-center">
+
+      <div class="w-16 h-16 rounded-full bg-gray-200 shadow
+                  flex items-center justify-center mb-4">
+        <img src="https://img.icons8.com/ios-glyphs/30/6B7280/artificial-intelligence.png" />
+      </div>
+
+      <p class="text-lg text-gray-600 text-center">
+        Upload a photo to see your<br>
+        <span class="font-semibold">skin analysis</span>
+      </p>
+    </div>
+    {% endif %}
+
+    {% if result %}
+    <div class="relative text-center">
+
+      <h2 class="text-4xl font-bold text-[#0F3D3E] mb-6">
+        Analysis Result
+      </h2>
+
+      <p class="text-xl mb-2">
+        <strong>Skin Type:</strong>
+        <span class="text-green-700 font-semibold">{{ result.label }}</span>
+      </p>
+
+      <p class="text-lg text-gray-700 mb-8">
+        <strong>Confidence:</strong> {{ result.confidence }}%
+      </p>
+
+      <img src="/uploads/{{ result.image }}"
+        class="mx-auto w-56 h-56 rounded-[32px] object-cover
+               shadow-[0_35px_70px_-20px_rgba(0,0,0,0.55)]
+               border border-gray-200" />
+    </div>
+    {% endif %}
+
+  </div>
+
+</div>
+</div>
+
+<footer class="bg-[#1A43BF] text-gray-200">
+  <div class="max-w-7xl mx-auto px-6 py-14">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+      <!-- Brand -->
+      <div>
+        <div class="flex items-center space-x-2">
+                <!-- <img src="{{ url_for('static', filename='images/lgo.png') }}" class="w-12 h-12"> -->
+
+                <h1 class="text-xl font-bold text-[#008B8B]">Dokter Ikan</h1>
+            </div>
+        <p class="text-sm leading-relaxed text-gray-300">
+          Solusi deteksi penyakit ikan berbasis AI untuk peternak Indonesia.
+          Cepat, akurat, dan mudah digunakan.
+        </p>
+      </div>
+
+      <!-- Menu Cepat -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Menu Cepat</h3>
+        <ul class="space-y-2 text-sm text-gray-300">
+          <li><a href="#Beranda" class="hover:text-teal-400 transition">Beranda</a></li>
+          <li><a href="#Penyakit" class="hover:text-teal-400 transition">Penyakit</a></li>
+          <li><a href="#Cara" class="hover:text-teal-400 transition">Cara Pakai</a></li>
+          <li><a href="#Teknologi" class="hover:text-teal-400 transition">Teknologi</a></li>
+          <li><a href="#" class="hover:text-teal-400 transition">Kontak</a></li>
+        </ul>
+      </div>
+
+      <!-- Kontak -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Kontak</h3>
+        <ul class="space-y-2 text-sm text-gray-300">
+          <li>Email: developer@chatbotikan.id</li>
+          <li>WhatsApp: +62 812-3456-7890</li>
+          <li>Indonesia</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Divider -->
+    <div class="border-t border-gray-600 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-300">
+      <p>© 2024 FishDocAI. Hak Cipta Dilindungi.</p>
+      <p class="mt-3 md:mt-0">
+        Dibuat dengan <span class="text-red-400">❤</span> untuk peternak Indonesia
+      </p>
+    </div>
+  </div>
+</footer>
+<script>
+    document.getElementById("uploadInput").addEventListener("change", function () {
+        alert("Foto berhasil dipilih! (Belum dianalisis)");
+    });
+
+document.getElementById("fileInput").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("previewImage");
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+    }
+});
+    
+    let lastScrollY = window.scrollY;
+  const navbar = document.getElementById("navbar");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > lastScrollY) {
+      // Scroll ke bawah → sembunyikan navbar
+      navbar.classList.add("-translate-y-32", "opacity-0");
+    } else {
+      // Scroll ke atas → tampilkan navbar
+      navbar.classList.remove("-translate-y-32", "opacity-0");
+    }
+
+    lastScrollY = window.scrollY;
+  });
+
+  const cards = document.querySelectorAll('.cardItem');
+const images = [
+    { img: "/static/images/upload.jpeg", title: "Penyakit A" },
+    { img: "/static/images/ai.jpeg", title: "Penyakit B" },
+    { img: "/static/images/result.jpeg", title: "Penyakit C" }
+];
+
+let index = 0;
+
+function showSlide(i) {
+    cards.forEach((card, idx) => {
+        card.classList.remove('active', 'card-blue');
+        card.classList.add('card-white', 'hidden');
+
+        if (idx === i) {
+            card.classList.add('active', 'card-blue');
+            card.classList.remove('card-white', 'hidden');
+        }
+    });
+
+    // ⭐ PERBAIKAN DI SINI ⭐
+    document.getElementById("slideImage").src = images[i].img;
+}
+
+document.getElementById("nextBtn").onclick = () => {
+    index = (index + 1) % cards.length;
+    showSlide(index);
+};
+
+document.getElementById("prevBtn").onclick = () => {
+    index = (index - 1 + cards.length) % cards.length;
+    showSlide(index);
+};
+
+// Untuk menampilkan slide pertama saat halaman dibuka
+showSlide(0);
+
+</script>
+</body>
+</html>
