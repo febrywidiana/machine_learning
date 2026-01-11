@@ -6,24 +6,25 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 import os
 
 app = Flask(__name__)
-model = tf.keras.models.load_model("model_skin_mobilenet2.h5")   # ganti nama model baru
-class_names = ["combination", "dry", "normal", "oily"]
+
+model = tf.keras.models.load_model("model_skin_fixed.keras")
+
+
+class_names = ["Dry", "Normal", "Oily"]
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def predict_skin(img_path):
-    # 🔥 MobileNetV2 WAJIB 224x224 + preprocess_input
+    # Setup gambar ke 224x224
     img = image.load_img(img_path, target_size=(224, 224))
     img_array = image.img_to_array(img)
-
-    # Expand dims
     img_array = np.expand_dims(img_array, axis=0)
-
-    # 🔥 Preprocessing khas MobileNetV2
+    
+    # Preprocessing wajib MobileNetV2
     img_array = preprocess_input(img_array)
 
-    # Predict
+    # Prediksi
     prediction = model.predict(img_array)[0]
     class_id = np.argmax(prediction)
     confidence = prediction[class_id]
@@ -39,17 +40,24 @@ def index():
     result = None
 
     if request.method == "POST":
+        if "file" not in request.files:
+            return render_template("index.html", result=None)
+            
         file = request.files["file"]
-        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-        file.save(filepath)
+        if file.filename == "":
+            return render_template("index.html", result=None)
 
-        label, prob = predict_skin(filepath)
+        if file:
+            filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+            file.save(filepath)
 
-        result = {
-            "label": label,
-            "confidence": round(float(prob) * 100, 2),
-            "image": file.filename
-        }
+            label, prob = predict_skin(filepath)
+
+            result = {
+                "label": label,
+                "confidence": round(float(prob) * 100, 2),
+                "image": file.filename
+            }
 
     return render_template("index.html", result=result)
 
